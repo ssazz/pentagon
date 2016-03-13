@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>pentagon fractal</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+}
+  </style>
+</head>
+<body>
+  <canvas id="pentagon"></canvas>
+  <script>
+window.onload = function() {
+  var canvas = document.getElementById('pentagon'),
+      c = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      var width = canvas.width,
+          height = canvas.height,
+          PHI = 1.6180339887,          // constant value of phi
+          angle = 2 * Math.PI / 5,   // 72 deg
+          ratio = 1 / (1 + PHI),   // repair
+          delta = 0,             // start angle
+          solid = false,       // true or false
+          limit = 1,         // 5^(limit) pentagons
+          side = 600;
+
+      function fractal(obj, length, limit) {
+        var R = (length / 2) * Math.cos(0.3 * Math.PI);
+        var new_r = R * ratio;
+        var new_length = length * ratio;
+        //var new_r = (new_length / 2) * Math.cos(0.3 * Math.PI);
+        //var radius = length / (2 * Math.cos(angle * 0.75));
+        //var new_length = length * ratio;
+        //var new_r = radius * ratio;
+        var objs = [];
+        if(limit > 0)
+        {
+          for(var i=0; i<5; i++) {
+            objs.push(
+              {
+                x: obj.x + Math.cos(delta + i * angle) * (R - new_r),
+                y: obj.y + Math.sin(delta + i * angle) * (R - new_r)
+              }
+            );
+          }
+          limit--;
+          fractal(objs[0], new_length, limit);
+          fractal(objs[1], new_length, limit);
+          fractal(objs[2], new_length, limit);
+          fractal(objs[3], new_length, limit);
+          fractal(objs[4], new_length, limit);
+        }
+        else
+        {
+          c.beginPath();
+          //c.moveTo(obj.x, obj.y);
+          for(var j=0; j<=5; j++) {
+            c.lineTo(obj.x + Math.cos(delta + j * angle) * length, obj.y + Math.sin(delta + j * angle) * length);
+          }
+          c.closePath();
+          c[solid ? 'fill' : 'stroke']();
+        }
+      }
+      fractal({x: width/2, y: height/2}, side, limit);
+};
+  </script>
+</body>
+</html>
